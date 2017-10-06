@@ -38,6 +38,7 @@ function Lecture01_Task03() {
         };
     };
 
+    // Fasade
     const skiResortTerminal = (personParams, money) => {
         if (money < 130) {
             return {
