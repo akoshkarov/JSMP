@@ -8,3 +8,7 @@ When a person creates a package, he can specify the type of transport. As result
 
 # Solution
 Choosed Dependency inversion pattern
+
+# Comment
+
+It is better to use Fctory method here
