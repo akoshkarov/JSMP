@@ -6,3 +6,7 @@ Let's imagine you come to a ski resort. You should go in some place and rent a s
 
 # Solution
 Choosed Fasade pattern
+
+# Comments
+
+I think the main key here is a word "then" and "one place" in description. It is better to use Chain of responsibility pattern. You can leave your facade implementation and apply Chain of resp. pattern.
