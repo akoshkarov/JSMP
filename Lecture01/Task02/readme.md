@@ -6,3 +6,7 @@ When this game is finished, each player who was made a bet to this game will rec
 
 # Solution
 Choosed Observer pattern
+
+# Comments
+
+Observer pattern requires subject/subscription/observers - I don't see it in the implementation. 
