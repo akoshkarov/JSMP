@@ -7,4 +7,4 @@ When a person creates a package, he can specify the type of transport. As result
 Когда человек создает пакет, он может указать тип транспорта. В результате в каком-то месте вашей реализации следует решить, какой тип транспорта должен создать и использовать для какой-либо посылки.
 
 # Solution
-Choosed Dependency inversion pattern
+Choosed Factory pattern

@@ -1,134 +1,138 @@
-function Lecture01_Task04() {
+const transportArray = [];
 
-    class Transport {
-        constructor(capacity, speed, price) {
-            this.capacity = capacity;
-            this.speed = speed;
-            this.price = price;
+// We assume that each package occupies one place
+class Package {
+    constructor(name, owner, transportType) {
+        this.name = name;
+        this.owner = owner;
+        this.transportType = transportType;
+        this.isPlaced = false;
 
-            this.packages = [];
-            this.filled = 0;
-        }
-
-        addPackage(package) {
-            if (package.size + this.filled > this.capacity) {
-                return false;
-            }
-            this.packages.push(package);
-            this.filled += package.size;
-            package.isPlaced = true;
-            return true;
-        }
-
-        checkCanTransport() {
-            return (Math.floor(this.filled / this.capacity) * 100) > 90;
-        };
-        prepareForTransporting() {};
-        startTransporting() {};
-        finishTransporting() {
-            this.packages = [];
-        }
+        console.log(`Created package '${this.name}' with owner ${this.owner} and choosed transport type ${this.transportType}`);
     }
 
-    class Car extends Transport {
-        constructor() {
-            super(100, 90, 10);
-            // specific logic for this transport type
+    placeToTransport() {
+        if (this.isPlaced === true) {
+            return;
         }
+        const transport = getTranport(this.transportType);
+        transport.addPackage();
+        this.isPlaced = true;
+        
+        console.log(`Package '${this.name}' with owner ${this.owner} placed in transport ${transport.transportType} named ${transport.name}`);
     }
-
-    class Ship {
-        constructor() {
-            super(600, 60, 7);
-            // specific logic for this transport type
-        }
-    }
-
-    // New transport type
-    class Plane {
-        constructor() {
-            super(400, 600, 20);
-            // specific logic for this transport type
-        }
-    }
-
-    class Package {
-        constructor(name, owner, transportOptions) {
-            this.name = name;
-            this.owner = owner;
-            this.transportClass = transportOptions.transportClass;
-            this.isPlaced = false;
-        }
-    }
-
-    const company = (() => {
-        const _packages = [];
-        const _transport = [];
-        const addPackage = (package) => {
-            _packages.push(package);
-        };
-
-        const checkPrepareForTransporting = () => {
-            _packages
-                .filter(package => !package.isPlaced)
-                .forEach(package => {
-                    const transportClass = package.transportClass;
-                    const transportUsed = _transport
-                        .filter(transport => transport instanceof transportClass);
-                    const transportCanBeUsed = [];
-                    const useTransport;
-                    if (transportUsed.length > 0) {
-                        transportCanBeUsed = transportUsed
-                            .reduce((canBeUsed, transport) => {
-                                    if (!transport.checkCanTransport()) {
-                                        canBeUsed.push(transport);
-                                    }
-                                },
-                                ransportCanBeUsed);
-                        if (transportCanBeUsed.length > 0) {
-                            // perform transportCanBeUsed[i].addPackage(package);
-                        }
-                    }
-                    if (!package.isPlaced) {
-                        useTransport = new package.transportClass();
-                        useTransport.addPackage(package);
-                        _transport.push(useTransport);
-                    }
-                });
-
-            const transportReady = _transport
-                .filter(transport => transport.checkCanTransport());
-
-            if (transportReady.length > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        };
-
-        const startTransporting = () => {
-            _transport.forEach(transport => {
-                transport.prepareForTransporting();
-                transport.startTransporting();
-                transport.finishTransporting();
-            });
-        };
-    })();
-
-    company.addPackage('Package_1', 'Tommy', {
-        transportClass: Car
-    });
-    company.addPackage('Package_2', 'Jennifer', {
-        transportClass: Ship
-    });
-    company.addPackage('Package_3', 'Sam', {
-        transportClass: Plane
-    });
-
-    if (company.checkPrepareForTransporting()) {
-        company.startTransporting();
-    }
-
-    console.log('=== Lecture01 - Task 04');
-    console.log('Just show code', '');
 }
+
+// Basic class for all transport types
+class Transport {
+    constructor(transportType, capacity, speed, price) {
+        this.transportType = transportType;
+        this.capacity = capacity;
+        this.speed = speed;
+        this.price = price;
+
+        this.placedPackages = [];
+        this.isFilled = false;
+
+        this.name = (new Date).toLocaleTimeString().replace(/:/g, '-') + '_' + Math.floor(Math.random()*100).toString();
+
+        console.log(`New transport '${transportType}' with name ${this.name} created`);
+    }
+
+    addPackage(pkg) {
+        if (this.isFilled) {
+            return;
+        }
+        this.placedPackages.push(pkg);
+        if (this.placedPackages.length === this.capacity) {
+            this.isFilled = true;
+        }
+    }
+
+    prepareForTrip() {}
+}
+
+// Specific transport types
+class Car extends Transport {
+    constructor() {
+        super('car', 3, 90, 10);
+    }
+    prepareForTrip() {
+        // specific logic for this transport type
+    }
+}
+
+class Ship extends Transport {
+    constructor() {
+        super('ship', 5, 60, 7);
+    }
+    prepareForTrip() {
+        // specific logic for this transport type
+    }
+}
+
+// New transport type
+class Plane extends Transport {
+    constructor() {
+        super('plane', 4, 600, 20);
+    }
+    prepareForTrip() {
+        // specific logic for this transport type
+    }
+}
+
+/////////////////
+const getTranport = (transportType) => {
+    console.log(`Called getTranport with transport type '${transportType}'`);
+    const avaialableTransport = transportArray
+        .filter(transport => transport.transportType === transportType && transport.isFilled === false);
+    if (avaialableTransport && avaialableTransport.length > 0) {
+        console.log(`Found available transport ${avaialableTransport[0].transportType} with name ${avaialableTransport[0].name}`);
+        return avaialableTransport[0];
+    } else {
+        console.log(`Creating new transport type '${transportType}'`);
+        const newTransport = transportFactory(transportType);
+        transportArray.push(newTransport);
+        return newTransport;
+    }
+};
+
+// Factory
+const transportFactory = (transportType) => {
+    console.log(`Call factory method`);
+    switch (transportType) {
+        case 'car':
+            return new Car();
+
+        case 'ship':
+            return new Ship();
+
+        case 'plane':
+            return new Plane();
+
+        default:
+            return null;
+    }
+};
+
+// User selects which type of transport he wants to use
+const carPackage1 = new Package('TV_package', 'Tommy_owner', 'car');
+const carPackage2 = new Package('Radio_package', 'Jessy_owner', 'car');
+const carPackage3 = new Package('Byke_package', 'Jessy_owner', 'car');
+const carPackage4 = new Package('Bottle_package', 'Jessy_owner', 'car');
+
+const shipPackage1 = new Package('Thing_package', 'Kate_owner', 'ship');
+
+const planePackage1 = new Package('Something_package', 'Jack_owner', 'plane');
+const planePackage2 = new Package('Something_good_package', 'Jack_owner', 'plane');
+const planePackage3 = new Package('Something_bad_package', 'Nick_owner', 'plane');
+
+let packages = [
+    carPackage1, carPackage2, carPackage3, carPackage4,
+    shipPackage1,
+    planePackage1, planePackage2, planePackage3
+];
+
+console.log('=== Lecture01 - Task 04');
+// Test
+packages.forEach((pkg) => pkg.placeToTransport());
